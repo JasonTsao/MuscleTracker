@@ -1,0 +1,7 @@
+*.pyc
+database.txt
+database.txt-journal
+.settings
+database_lock.txt
+
+MuscleTracker/local_settings.py

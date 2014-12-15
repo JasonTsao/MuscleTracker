@@ -19,12 +19,42 @@ logger = logging.getLogger("django.request")
 @login_required
 def getWorkout(request, workout_id):
 	rtn_dict = {'success': False, "msg": ""}
+
+	try:
+		if not request.user.id:
+			user_id = request.POST['user']
+		else:
+			user_id = request.user.id
+
+		account = Account.objects.get(user__id=user_id)
+		workout = Workout.objects.get(pk=workout_id)
+		rtn_dict['workout'] = model_to_dict(workout)
+	except Exception as e:
+		print e
+		logger.info('Error grabbing workout {0}: {1}'.format(workout_id, e))
+		rtn_dict['msg'] = 'Error grabbing workout {0}: {1}'.format(workout_id, e)
+
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 
 @login_required
-def getWorkouts(request, workout_id):
+def getWorkouts(request):
 	rtn_dict = {'success': False, "msg": ""}
+
+	try:
+		if not request.user.id:
+			user_id = request.POST['user']
+		else:
+			user_id = request.user.id
+
+		account = Account.objects.get(user__id=user_id)
+		workouts = Workout.objects.filter(account=account)
+		rtn_dict['workout'] = model_to_dict(workouts)
+	except Exception as e:
+		print e
+		logger.info('Error grabbing workouts {0}: {1}'.format(workout_id, e))
+		rtn_dict['msg'] = 'Error grabbing workouts {0}: {1}'.format(workout_id, e)
+
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 
@@ -49,8 +79,8 @@ def getWorkoutHistory(request, workout_id):
 
 	except Exception as e:
 		print e
-		logger.info('Error grabbing workout {0}: {1}'.format(workout_id, e))
-		rtn_dict['msg'] = 'Error grabbing workout {0}: {1}'.format(workout_id, e)
+		logger.info('Error grabbing workout history {0}: {1}'.format(workout_id, e))
+		rtn_dict['msg'] = 'Error grabbing workout history {0}: {1}'.format(workout_id, e)
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
@@ -72,7 +102,7 @@ def getWorkoutHistories(request):
 
 	except Exception as e:
 		print e
-		logger.info('Error grabbing workouts {0}: {1}'.format(workout_id, e))
-		rtn_dict['msg'] = 'Error grabbing workouts {0}: {1}'.format(workout_id, e)
+		logger.info('Error grabbing workout histories {0}'.format(e))
+		rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")

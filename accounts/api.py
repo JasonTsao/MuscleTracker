@@ -1,4 +1,5 @@
 import json
+import logging
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, Context, RequestContext
@@ -7,6 +8,8 @@ from django.contrib.auth.views import logout
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.contrib.auth.hashers import make_password
+
+logger = logging.getLogger("django.request")
 
 
 @csrf_exempt
@@ -57,4 +60,56 @@ def login(request):
 	if login_failed:
 		response['Auth-Response'] = 'Login failed''
 	'''
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@csrf_exempt
+def registerUser(request):
+	rtn_dict = {'success': False, "msg": ""}
+
+	login_failed = False
+
+	if request.method == 'POST':
+		try:
+			new_user = User(username=request.POST.get("username"))
+			new_user.is_active = True
+			new_user.password = make_password(request.POST.get('password1'))
+			new_user.email = request.POST.get('email')
+			new_user.save()
+			user = authenticate(username=request.POST.get("username"), password=request.POST.get("password1"))
+
+			if user is None:
+				login_failed = True
+				status = 401
+
+			else:
+				auth_login(request, user)
+				account = Account(user=user)
+				account.email = user.email
+				account.user_name = user.username
+				account.save()
+
+				rtn_dict['success'] = True
+				rtn_dict['msg'] = 'Successfully registered new user'
+				rtn_dict['user'] = new_user.id
+				rtn_dict['account'] = account.id
+				return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json", status=status)
+
+		except Exception as e:
+			print 'Error registering new user: {0}'.format(e)
+			logger.info('Error registering new user: {0}'.format(e))
+			rtn_dict['msg'] = 'Error registering new user: {0}'.format(e)
+
+	else:
+		rtn_dict['msg'] = 'Not POST'
+
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@csrf_exempt
+def logoutUser(request):
+	rtn_dict = {'success': False, "msg": ""}
+	logout(request)
+	if not request.user.is_authenticated():
+		rtn_dict['success'] = True
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")

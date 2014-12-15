@@ -3,6 +3,6 @@ from models import *
 
 admin.site.register(Muscle)
 admin.site.register(Equipment)
-admin.site.register(Excercise)
-admin.site.register(ExcerciseHistory)
+admin.site.register(Exercise)
+admin.site.register(ExerciseHistory)
 

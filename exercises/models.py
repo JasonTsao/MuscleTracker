@@ -23,7 +23,7 @@ class Equipment(models.Model):
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
-class Excercise(models.Model):
+class Exercise(models.Model):
 	name = models.CharField(max_length=255)
 	main_muscle = models.ForeignKey(Muscle)
 	equipment = models.ForeignKey(Equipment, null=True, blank=True)
@@ -35,9 +35,9 @@ class Excercise(models.Model):
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 
-class ExcerciseHistory(models.Model):
+class ExerciseHistory(models.Model):
 	workout_history = models.ForeignKey(WorkoutHistory)
-	exercise = models.ForeignKey(Excercise)
+	exercise = models.ForeignKey(Exercise)
 	order = models.IntegerField()
 	sets = models.TextField()
 

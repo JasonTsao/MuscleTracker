@@ -5,7 +5,7 @@ from accounts.models import Account
 class Workout(models.Model):
 	account = models.ForeignKey(Account)
 	name = models.CharField(max_length=255)
-	exercises = models.ManyToManyField('exercises.Excercise')
+	exercises = models.ManyToManyField('exercises.Exercise')
 
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)

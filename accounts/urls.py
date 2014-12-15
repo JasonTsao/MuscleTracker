@@ -3,5 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import logout
 
 urlpatterns = patterns("accounts.api",
-                        url(r"^login", "login"),
+                        url(r"^register$", "registerUser"),
+                        url(r"^login$", "login"),
+                        url(r'logout', "logoutUser"),
 )

@@ -7,5 +7,6 @@ urlpatterns = patterns("exercises.api",
 			url(r"^history/(\d+)", "getExerciseHistory"),
 			url(r"^history/all", "getExerciseHistories"),
 			url(r"^history/add", "addExerciseHistoryToWorkout"),
+			url(r"^history/edit/(\d+)", "editExerciseHistory"),
 
 )

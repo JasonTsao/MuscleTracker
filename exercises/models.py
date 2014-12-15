@@ -1,6 +1,6 @@
 from django.db import models
 from accounts.models import Account
-from workouts.models import Workout
+from workouts.models import WorkoutHistory, Workout
 
 GENDER = (
     ('easy', 'Easy'),
@@ -36,7 +36,7 @@ class Excercise(models.Model):
 
 
 class ExcerciseHistory(models.Model):
-	workout = models.ForeignKey(Workout)
+	workout_history = models.ForeignKey(WorkoutHistory)
 	exercise = models.ForeignKey(Excercise)
 	order = models.IntegerField()
 	sets = models.TextField()
@@ -45,4 +45,4 @@ class ExcerciseHistory(models.Model):
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 
 	class Meta:
-		unique_together = (('workout', 'order'),)
+		unique_together = (('workout_history', 'order'),)

@@ -43,23 +43,22 @@ class Migration(SchemaMigration):
         # Adding model 'ExcerciseHistory'
         db.create_table(u'exercises_excercisehistory', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('account', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.Account'])),
-            ('workout', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['workouts.Workout'])),
+            ('workout_history', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['workouts.WorkoutHistory'])),
+            ('exercise', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['exercises.Excercise'])),
             ('order', self.gf('django.db.models.fields.IntegerField')()),
-            ('date', self.gf('django.db.models.fields.DateField')()),
             ('sets', self.gf('django.db.models.fields.TextField')()),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
         ))
         db.send_create_signal(u'exercises', ['ExcerciseHistory'])
 
-        # Adding unique constraint on 'ExcerciseHistory', fields ['workout', 'order']
-        db.create_unique(u'exercises_excercisehistory', ['workout_id', 'order'])
+        # Adding unique constraint on 'ExcerciseHistory', fields ['workout_history', 'order']
+        db.create_unique(u'exercises_excercisehistory', ['workout_history_id', 'order'])
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'ExcerciseHistory', fields ['workout', 'order']
-        db.delete_unique(u'exercises_excercisehistory', ['workout_id', 'order'])
+        # Removing unique constraint on 'ExcerciseHistory', fields ['workout_history', 'order']
+        db.delete_unique(u'exercises_excercisehistory', ['workout_history_id', 'order'])
 
         # Deleting model 'Muscle'
         db.delete_table(u'exercises_muscle')
@@ -148,15 +147,14 @@ class Migration(SchemaMigration):
             'rating': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
         },
         u'exercises.excercisehistory': {
-            'Meta': {'unique_together': "(('workout', 'order'),)", 'object_name': 'ExcerciseHistory'},
-            'account': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.Account']"}),
+            'Meta': {'unique_together': "(('workout_history', 'order'),)", 'object_name': 'ExcerciseHistory'},
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'date': ('django.db.models.fields.DateField', [], {}),
+            'exercise': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['exercises.Excercise']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
             'order': ('django.db.models.fields.IntegerField', [], {}),
             'sets': ('django.db.models.fields.TextField', [], {}),
-            'workout': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['workouts.Workout']"})
+            'workout_history': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['workouts.WorkoutHistory']"})
         },
         u'exercises.muscle': {
             'Meta': {'object_name': 'Muscle'},
@@ -165,8 +163,8 @@ class Migration(SchemaMigration):
             'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
         },
-        u'workouts.workout': {
-            'Meta': {'object_name': 'Workout'},
+        u'workouts.workouthistory': {
+            'Meta': {'object_name': 'WorkoutHistory'},
             'account': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.Account']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),

@@ -12,17 +12,42 @@ class Migration(SchemaMigration):
         db.create_table(u'workouts_workout', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('account', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.Account'])),
-            ('date', self.gf('django.db.models.fields.DateTimeField')()),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
         ))
         db.send_create_signal(u'workouts', ['Workout'])
 
+        # Adding M2M table for field exercises on 'Workout'
+        m2m_table_name = db.shorten_name(u'workouts_workout_exercises')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('workout', models.ForeignKey(orm[u'workouts.workout'], null=False)),
+            ('excercise', models.ForeignKey(orm[u'exercises.excercise'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['workout_id', 'excercise_id'])
+
+        # Adding model 'WorkoutHistory'
+        db.create_table(u'workouts_workouthistory', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('account', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.Account'])),
+            ('date', self.gf('django.db.models.fields.DateTimeField')()),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('created', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('modified', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, null=True, blank=True)),
+        ))
+        db.send_create_signal(u'workouts', ['WorkoutHistory'])
+
 
     def backwards(self, orm):
         # Deleting model 'Workout'
         db.delete_table(u'workouts_workout')
+
+        # Removing M2M table for field exercises on 'Workout'
+        db.delete_table(db.shorten_name(u'workouts_workout_exercises'))
+
+        # Deleting model 'WorkoutHistory'
+        db.delete_table(u'workouts_workouthistory')
 
 
     models = {
@@ -79,8 +104,43 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'exercises.equipment': {
+            'Meta': {'object_name': 'Equipment'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        u'exercises.excercise': {
+            'Meta': {'object_name': 'Excercise'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'difficulty': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'equipment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['exercises.Equipment']", 'null': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'main_muscle': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['exercises.Muscle']"}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'picture_url': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'rating': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'})
+        },
+        u'exercises.muscle': {
+            'Meta': {'object_name': 'Muscle'},
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         u'workouts.workout': {
             'Meta': {'object_name': 'Workout'},
+            'account': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.Account']"}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'exercises': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['exercises.Excercise']", 'symmetrical': 'False'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        u'workouts.workouthistory': {
+            'Meta': {'object_name': 'WorkoutHistory'},
             'account': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.Account']"}),
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateTimeField', [], {}),

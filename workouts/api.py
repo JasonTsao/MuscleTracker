@@ -106,3 +106,42 @@ def getWorkoutHistories(request):
 		rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@login_required
+def saveWorkoutHistory(request):
+	rtn_dict = {'success': False, "msg": ""}
+
+	if request.method == 'POST':
+		try:
+			if not request.user.id:
+				user_id = request.POST['user']
+			else:
+				user_id = request.user.id
+
+			account = Account.objects.get(user__id=user_id)
+			workout_history = WorkoutHistory(request.POST['workout_history'])
+			workout_history.save()
+
+			exercise_histories = request.POST['exercises']
+
+			count = 0
+			exercise_history_ids = []
+			for exercise_item in exercise_histories:
+				exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise_item['exercise_id'], order=count)
+				exercise_history.sets = request.POST['sets']
+				exercise_history.save()
+				exercise_history_ids.apopend(exercise_history.id)
+				count +=1
+
+			rtn_dict['workout_history_id'] = workout_history.id
+			rtn_dict['exercise_history_ids'] = exercise_history_ids
+
+		except Exception as e:
+			print e
+			logger.info('Error grabbing workout histories {0}'.format(e))
+			rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
+	else:
+        rtn_dict['msg'] = 'Not POST'
+
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")

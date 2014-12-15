@@ -36,10 +36,9 @@ class Excercise(models.Model):
 
 
 class ExcerciseHistory(models.Model):
-	account = models.ForeignKey(Account)
 	workout = models.ForeignKey(Workout)
+	exercise = models.ForeignKey(Excercise)
 	order = models.IntegerField()
-	date = models.DateField()
 	sets = models.TextField()
 
 	created = models.DateTimeField(auto_now_add=True)

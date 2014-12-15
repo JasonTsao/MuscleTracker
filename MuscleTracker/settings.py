@@ -132,6 +132,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'gunicorn',
+    'accounts',
+    'exercises',
+    'muscle_loads',
+    'workouts',
+
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

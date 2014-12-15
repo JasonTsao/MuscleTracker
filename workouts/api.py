@@ -49,7 +49,7 @@ def getWorkouts(request):
 
 		account = Account.objects.get(user__id=user_id)
 		workouts = Workout.objects.filter(account=account)
-		rtn_dict['workout'] = model_to_dict(workouts)
+		rtn_dict['workout'] = [model_to_dict(workout) for workout in workouts]
 	except Exception as e:
 		print e
 		logger.info('Error grabbing workouts {0}: {1}'.format(workout_id, e))
@@ -110,7 +110,7 @@ def getWorkoutHistories(request):
 
 @login_required
 def saveWorkoutHistory(request):
-	rtn_dict = {'success': False, "msg": ""}
+	rtn_dict = {'success': False, "msg": "", "exercise_history_ids":[], 'workout_history_id':None}
 
 	if request.method == 'POST':
 		try:
@@ -123,25 +123,25 @@ def saveWorkoutHistory(request):
 			workout_history = WorkoutHistory(request.POST['workout_history'])
 			workout_history.save()
 
-			exercise_histories = request.POST['exercises']
+			exercise_histories = request.POST.get('exercises', False)
 
-			count = 0
-			exercise_history_ids = []
-			for exercise_item in exercise_histories:
-				exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise_item['exercise_id'], order=count)
-				exercise_history.sets = request.POST['sets']
-				exercise_history.save()
-				exercise_history_ids.apopend(exercise_history.id)
-				count +=1
+			if exercise_histories:
+				count = 0
+				exercise_history_ids = []
+				for exercise_item in exercise_histories:
+					exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise_item['exercise_id'], order=count)
+					exercise_history.sets = request.POST['sets']
+					exercise_history.save()
+					exercise_history_ids.append(exercise_history.id)
+					count +=1
+					rtn_dict['exercise_history_ids'] = exercise_history_ids
 
 			rtn_dict['workout_history_id'] = workout_history.id
-			rtn_dict['exercise_history_ids'] = exercise_history_ids
-
 		except Exception as e:
 			print e
 			logger.info('Error grabbing workout histories {0}'.format(e))
 			rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
 	else:
-        rtn_dict['msg'] = 'Not POST'
+		rtn_dict['msg'] = 'Not POST'
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")

@@ -9,6 +9,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     url(r'^admin/', include(admin.site.urls)),
+    (r'^$', 'accounts.views.signup'),
     # url(r'^$', 'MuscleTracker.views.home', name='home'),
     # url(r'^MuscleTracker/', include('MuscleTracker.foo.urls')),
     url(r'^acct/', include('accounts.urls')),

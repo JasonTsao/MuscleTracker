@@ -1,5 +1,7 @@
 import json
 import logging
+import celery
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader, Context, RequestContext
@@ -11,6 +13,9 @@ from django.contrib.auth.hashers import make_password
 
 logger = logging.getLogger("django.request")
 
+def save_email(request):
+	rtn_dict = {'success': False, "msg": ""}
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json", status=status)
 
 @csrf_exempt
 def login(request):
@@ -113,3 +118,25 @@ def logoutUser(request):
 	if not request.user.is_authenticated():
 		rtn_dict['success'] = True
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@celery.task
+def prepMail():
+    '''
+        Sends a url to tryout app
+    '''
+    # get mail ID
+    subject = prepSubjectOfMail(issue, update_type)
+    body = prepBodyOfMail(issue, update_type, comment)
+    mail_to = prepMailingList(issue, update_type)
+    html_content = get_template('email/index-inline.html').render(Context(body))
+    mail_from = settings.EMAIL_SENDER
+    msg = EmailMessage(subject, html_content, mail_from, mail_to)
+    msg.content_subtype = "html"  # Main content is now text/html; needs to be called after context is set
+    try:
+        print("Attempting to send message")
+        msg.send()
+    except Exception as e:
+        print("Unable to send mail")
+        print(e)
+        print(mail_to, mail_from, subject)

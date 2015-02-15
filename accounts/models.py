@@ -24,3 +24,11 @@ class Account(models.Model):
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 	def __unicode__(self):
 		return str('{0}'.format(self.user_name))
+
+
+class BetaEmail(models.Model):
+	email = models.EmailField(max_length=75, unique=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+	def __unicode__(self):
+		return str('{0}'.format(self.email))

@@ -1,6 +1,5 @@
 import json
 import logging
-import celery
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
@@ -120,7 +119,6 @@ def logoutUser(request):
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 
-@celery.task
 def prepMail():
     '''
         Sends a url to tryout app

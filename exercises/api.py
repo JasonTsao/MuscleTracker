@@ -102,6 +102,12 @@ def getExerciseHistories(request, workout_id):
 
 
 @login_required
+def saveExercise(request):
+	rtn_dict = {'success': False, "msg": ""}
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@login_required
 def addExerciseHistoryToWorkout(request):
 	rtn_dict = {'success': False, "msg": "", "exercise_history_id":None}
 

@@ -29,3 +29,5 @@ class MuscleLoad(models.Model):
 
 	class Meta:
 		unique_together = (('account', 'date'),)
+	def __unicode__(self):
+		return '{0} : {1}'.format(self.account.user_name, self.date)

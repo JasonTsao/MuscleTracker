@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+	{% load staticfiles %}
+	<meta charset="utf-8">
+	<!--<meta name="viewport" content="width=640, initial-scale=1">-->
+	<title>Muscle Tracker</title>
+	<!--jquery-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<!--jquery mobile library-->
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.3/jquery.mobile.min.js"></script>
+	<!--Bootstrap CSS & JS-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+	<!-- Mean Menu CSS & JS -->
+	<!--Open Sans from Google Fonts-->
+	<link href='http://fonts.googleapis.com/css?family=Oxygen:700,400|Open+Sans:400,800,700,600,300' rel='stylesheet' type='text/css'>
+	{% block additionalHead %}{% endblock %}
+</head>
+<body>
+	{% block bodyContent %}
+	{% endblock %}
+</body>
+	{% block endScripts %}{% endblock %}
+	<script>
+		$(document).ready(function() {
+	
+		});
+	</script>
+</html>

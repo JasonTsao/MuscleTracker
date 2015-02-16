@@ -2,18 +2,28 @@ from django.db import models
 from accounts.models import Account
 from workouts.models import WorkoutHistory, Workout
 
-GENDER = (
+DIFFICULTY = (
     ('easy', 'Easy'),
     ('medium', 'Medium'),
     ('hard', 'Hard'),
 )
 
-# Create your models here.
-class Muscle(models.Model):
-	name = models.CharField(max_length=255)
 
+class BodyPart(models.Model):
+	name = models.CharField(max_length=255)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+	def __unicode__(self):
+		return self.name
+
+
+class Muscle(models.Model):
+	name = models.CharField(max_length=255)
+	body_part = models.ForeignKey(BodyPart, null=True,blank=True)
+	created = models.DateTimeField(auto_now_add=True)
+	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+	def __unicode__(self):
+		return self.name
 
 
 class Equipment(models.Model):
@@ -21,6 +31,8 @@ class Equipment(models.Model):
 
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+	def __unicode__(self):
+		return self.name
 
 
 class Exercise(models.Model):
@@ -33,6 +45,11 @@ class Exercise(models.Model):
 
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
+	def __unicode__(self):
+		if self.equipment.name:
+			return '{0} : {1}: {2}'.format(self.name, self.main_muscle.name, self.equipment.name)
+		else:
+			return '{0} : {1}'.format(self.name, self.main_muscle.name)
 
 
 class ExerciseHistory(models.Model):
@@ -46,3 +63,5 @@ class ExerciseHistory(models.Model):
 
 	class Meta:
 		unique_together = (('workout_history', 'order'),)
+	def __unicode__(self):
+		return '{0} : {1}'.format(self.workout_history.name, self.exercise.name)

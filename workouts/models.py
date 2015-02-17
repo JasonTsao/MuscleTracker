@@ -15,6 +15,7 @@ class Workout(models.Model):
 
 class WorkoutHistory(models.Model):
 	account = models.ForeignKey(Account)
+	workout = models.ForeignKey(Workout)
 	date =  models.DateTimeField()
 	name = models.CharField(max_length=255)
 	exercise_histories = models.ManyToManyField('exercises.ExerciseHistory')

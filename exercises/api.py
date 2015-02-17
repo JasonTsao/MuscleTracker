@@ -107,7 +107,6 @@ def getExerciseHistories(request, workout_id):
 def saveExercise(request):
 	rtn_dict = {'success': False, "msg": ""}
 
-
 	if request.method == 'POST':
 		try:
 			if not request.user.id:

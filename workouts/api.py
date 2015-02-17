@@ -8,6 +8,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import User
 
 from models import Workout, WorkoutHistory
+from forms import WorkoutForm, WorkoutHistoryForm
 from accounts.models import Account
 from exercises.models import Exercise, ExerciseHistory 
 
@@ -104,6 +105,37 @@ def getWorkoutHistories(request):
 		print e
 		logger.info('Error grabbing workout histories {0}'.format(e))
 		rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
+
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@login_required
+def saveWorkout(request):
+	rtn_dict = {'success': False, "msg": ""}
+
+	if request.method == 'POST':
+		try:
+			if not request.user.id:
+				user_id = request.POST['user']
+			else:
+				user_id = request.user.id
+
+			account = Account.objects.get(user__id=user_id)
+			workout = Workout()
+			form = WorkoutForm(request.POST['workout'], instance=workout)
+
+			if form.is_valid():
+				for exercise_id in request.POST['exercises']:
+					exercise = Exercise.objects.get(pk=exercise_id)
+					workout.exercises.add(exercise)
+				workout.save()
+				rtn_dict['success'] = True
+		except Exception as e:
+			print e
+			logger.info('Error saving workout {0}'.format(e))
+			rtn_dict['msg'] = 'Error saving workout {0}'.format(e)
+	else:
+		rtn_dict['msg'] = 'Not POST'
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 

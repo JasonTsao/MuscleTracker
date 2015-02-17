@@ -2,10 +2,48 @@
 {% load staticfiles %}
 
 {% block bodyContent %}
-<div id="bodycontent" style="width:100%">
+<div id="bodycontent">
 	<h1>
 		New Workout
-	</h1>>
+	</h1>
+		{{form}}
+		<input type="button" value="Submit" onclick="submitData()">
+	</form>
 
 </div>
 {% endblock%}
+
+{% block endScripts %}
+<script>
+
+	function submitData(){
+
+		var workout_dict = {
+			'name': $('#id_name').val(),
+		};
+
+		var exercises = [];
+
+		var json_dict = {
+            'workout': workout_dict,
+            'exercises': exercises,
+            'csrfmiddlewaretoken': "{{csrf_token}}",
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'workouts.api.saveWorkout' %}",
+            data: json_dict,
+            success: function(data) {
+                console.log(data);
+                console.log('success! saved workout!')
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+	}
+
+
+</script>
+{% endblock %}

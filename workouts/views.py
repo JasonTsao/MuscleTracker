@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
 
+from workouts.forms import *
 
 def newWorkout(request):
-	return render_to_response('workouts/new_workout.html', {}, context_instance=RequestContext(request))
+	return render_to_response('workouts/new_workout.html', {"form":WorkoutForm()}, context_instance=RequestContext(request))

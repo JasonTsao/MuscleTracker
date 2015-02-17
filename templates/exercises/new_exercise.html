@@ -6,10 +6,37 @@
 	<h1>
 		New Exercise
 	</h1>
-	<form action="{% url 'exercises.api.saveExercise' %}"  method="POST" enctype="multipart/form-data"> 
 		{{form}}
-		<input type="submit" value="Submit">
+		<input type="button" value="Submit" onclick="submitData()">
 	</form>
 
 </div>
 {% endblock%}
+
+{% block endScripts %}
+<script>
+
+	function submitData(){
+		var json_dict = {
+            'name': $('#id_name').val(),
+            'main_muscle': $('#id_main_muscle').val(),
+            'csrfmiddlewaretoken': "{{csrf_token}}",
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'exercises.api.saveExercise' %}",
+            data: json_dict,
+            success: function(data) {
+                console.log(data);
+                console.log('success! saved exercise!')
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+	}
+
+
+</script>
+{% endblock %}

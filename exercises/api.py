@@ -10,7 +10,9 @@ from accounts.models import Account
 from workouts.models import Workout, WorkoutHistory
 from models import Exercise, ExerciseHistory, Muscle, Equipment
 from django.views.decorators.csrf import csrf_exempt
+from exercises.forms import *
 
+logger = logging.getLogger("django.request")
 
 @login_required
 def getExercise(request, exercise_id):
@@ -104,6 +106,30 @@ def getExerciseHistories(request, workout_id):
 @login_required
 def saveExercise(request):
 	rtn_dict = {'success': False, "msg": ""}
+
+
+	if request.method == 'POST':
+		try:
+			if not request.user.id:
+				user_id = str(request.POST['user'])
+			else:
+				user_id = str(request.user.id)
+
+			account = Account.objects.get(user__id=user_id)
+
+			exercise = Exercise()
+			form = ExerciseForm(request.POST, instance=exercise)
+
+			if form.is_valid():
+				exercise = form.save()
+				rtn_dict['success'] = True
+		except Exception as e:
+			print e
+			logger.info('Error saving exercise {0}'.format(e))
+			rtn_dict['msg'] = 'Error saving exercise history {0}'.format(e)
+	else:
+		rtn_dict['msg'] = 'HTTP Method is supposed to be POST'
+
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 

@@ -23,6 +23,7 @@ class EquiptmentForm(forms.ModelForm):
 class ExerciseForm(forms.ModelForm):
 	class Meta:
 		model = Exercise
+		fields = ('name', 'main_muscle')
 
 
 class ExerciseHistoryForm(forms.ModelForm):

@@ -46,7 +46,7 @@ class Exercise(models.Model):
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 	def __unicode__(self):
-		if self.equipment.name:
+		if self.equipment:
 			return '{0} : {1}: {2}'.format(self.name, self.main_muscle.name, self.equipment.name)
 		else:
 			return '{0} : {1}'.format(self.name, self.main_muscle.name)

@@ -120,18 +120,15 @@ def saveWorkout(request):
 			else:
 				user_id = request.user.id
 
-			account = Account.objects.get(user__id=user_id)
-			workout = Workout()
-			form = WorkoutForm(request.POST['workout'], instance=workout)
+			account = Account.objects.get(pk=request.POST['account'])
+			workout = Workout(name=request.POST['name'], account=account)
+			workout.save()
 
-			if form.is_valid():
-				for exercise_id in request.POST['exercises']:
-					exercise = Exercise.objects.get(pk=exercise_id)
-					workout.exercises.add(exercise)
-				workout.save()
-				rtn_dict['success'] = True
-			else:
-				rtn_dict['msg'] = "form data invalid!"
+			for exercise_id in request.POST.getlist('exercises[]'):
+				exercise = Exercise.objects.get(pk=exercise_id)
+				workout.exercises.add(exercise)
+			rtn_dict['success'] = True
+
 		except Exception as e:
 			print e
 			logger.info('Error saving workout {0}'.format(e))

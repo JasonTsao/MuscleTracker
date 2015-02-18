@@ -6,9 +6,11 @@
 	<h1>
 		New Workout
 	</h1>
+    <!--<form action="{% url 'workouts.api.saveWorkout' %}" method="POST">-->
 		{{form}}
 		<input type="button" value="Submit" onclick="submitData()">
-	</form>
+        <!--<input type="submit" value="Submit">-->
+	<!--</form>-->
 
 </div>
 {% endblock%}
@@ -25,8 +27,9 @@
 		var exercises = [];
 
 		var json_dict = {
-            'workout': workout_dict,
-            'exercises': exercises,
+            "account": $('#id_account').val(),
+            "name": $('#id_name').val(),
+            'exercises': $('#id_exercises').val(),
             'csrfmiddlewaretoken': "{{csrf_token}}",
         }
 

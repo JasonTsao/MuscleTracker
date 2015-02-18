@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block bodyContent %}
+<div id="bodycontent">
+	<h1>
+		New Exercise
+	</h1>
+		{{form}}
+		<input type="button" value="Submit" onclick="submitData()">
+	</form>
+
+</div>
+{% endblock%}
+
+{% block endScripts %}
+<script>
+
+	function submitData(){
+		var json_dict = {
+            'name': $('#id_name').val(),
+            'main_muscle': $('#id_main_muscle').val(),
+            'csrfmiddlewaretoken': "{{csrf_token}}",
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'exercises.api.saveExercise' %}",
+            data: json_dict,
+            success: function(data) {
+                console.log(data);
+                console.log('success! saved exercise!')
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+	}
+
+
+</script>
+{% endblock %}

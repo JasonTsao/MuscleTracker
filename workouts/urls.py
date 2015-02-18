@@ -12,4 +12,5 @@ urlpatterns = patterns("workouts.api",
 
 urlpatterns += patterns("workouts.views",
 			url(r"^new", "newWorkout"),
+			url(r"^history/new", "newWorkoutHistory"),
 )

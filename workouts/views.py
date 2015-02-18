@@ -7,5 +7,10 @@ from django.http import HttpResponse
 
 from workouts.forms import *
 
+
 def newWorkout(request):
 	return render_to_response('workouts/new_workout.html', {"form":WorkoutForm()}, context_instance=RequestContext(request))
+
+
+def newWorkoutHistory(request):
+	return render_to_response('workouts/new_workout_history.html', {"form":WorkoutHistoryForm()}, context_instance=RequestContext(request))

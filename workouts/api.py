@@ -130,6 +130,8 @@ def saveWorkout(request):
 					workout.exercises.add(exercise)
 				workout.save()
 				rtn_dict['success'] = True
+			else:
+				rtn_dict['msg'] = "form data invalid!"
 		except Exception as e:
 			print e
 			logger.info('Error saving workout {0}'.format(e))

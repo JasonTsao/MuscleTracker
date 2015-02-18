@@ -10,7 +10,7 @@ DIFFICULTY = (
 
 
 class BodyPart(models.Model):
-	name = models.CharField(max_length=255)
+	name = models.CharField(max_length=255, unique=True)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 	def __unicode__(self):
@@ -18,7 +18,7 @@ class BodyPart(models.Model):
 
 
 class Muscle(models.Model):
-	name = models.CharField(max_length=255)
+	name = models.CharField(max_length=255, unique=True)
 	body_part = models.ForeignKey(BodyPart, null=True,blank=True)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -27,7 +27,7 @@ class Muscle(models.Model):
 
 
 class Equipment(models.Model):
-	name = models.CharField(max_length=255)
+	name = models.CharField(max_length=255, unique=True)
 
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
@@ -36,7 +36,7 @@ class Equipment(models.Model):
 
 
 class Exercise(models.Model):
-	name = models.CharField(max_length=255)
+	name = models.CharField(max_length=255, unique=True)
 	main_muscle = models.ForeignKey(Muscle)
 	equipment = models.ForeignKey(Equipment, null=True, blank=True)
 	difficulty = models.CharField(max_length=255)

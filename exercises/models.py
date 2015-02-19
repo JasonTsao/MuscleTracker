@@ -64,4 +64,4 @@ class ExerciseHistory(models.Model):
 	class Meta:
 		unique_together = (('workout_history', 'order'),)
 	def __unicode__(self):
-		return '{0} : {1}'.format(self.workout_history.name, self.exercise.name)
+		return '{0} : {1}'.format(self.workout_history.workout.name, self.exercise.name)

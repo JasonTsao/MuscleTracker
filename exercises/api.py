@@ -134,7 +134,7 @@ def saveExercise(request):
 
 @login_required
 def addExerciseHistoryToWorkout(request):
-	rtn_dict = {'success': False, "msg": "", "exercise_history_id":None}
+	rtn_dict = {'success': False, "msg": ""}
 
 	if request.method == 'POST':
 		try:
@@ -150,9 +150,8 @@ def addExerciseHistoryToWorkout(request):
 			exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise_item['exercise_id'], order=count)
 			exercise_history.sets = request.POST['sets']
 			exercise_history.save()
-			exercise_history_ids.append(exercise_history.id)
 
-			rtn_dict['exercise_history_id'] = workout_history.id
+			rtn_dict['success'] = True
 		except Exception as e:
 			print e
 			logger.info('Error grabbing exercise histories {0}'.format(e))

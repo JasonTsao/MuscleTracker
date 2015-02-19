@@ -7,7 +7,9 @@
 		New Workout
 	</h1>
     <!--<form action="{% url 'workouts.api.saveWorkout' %}" method="POST">-->
-		{{form}}
+		account: {{form.account}}</br>
+        workout: {{form.workout}}</br>
+        {{workout_form.exercises}}
 		<input type="button" value="Submit" onclick="submitData()">
         <!--<input type="submit" value="Submit">-->
 	<!--</form>-->
@@ -24,18 +26,28 @@
 			'name': $('#id_name').val(),
 		};
 
-		var exercises = [];
+		var exercises =  $('#id_exercises').val();
+        var exercise_sets = {};
+
+        for( exercise in exercises){
+            console.log(exercises[exercise]);
+            exercise_sets[exercises[exercise]] = {
+                "reps": 32,
+                "weights": 40,
+            }
+        }
 
 		var json_dict = {
             "account": $('#id_account').val(),
-            "name": $('#id_name').val(),
+            "workout": $('#id_workout').val(),
             'exercises': $('#id_exercises').val(),
+            'exercise_sets': JSON.stringify(exercise_sets),
             'csrfmiddlewaretoken': "{{csrf_token}}",
         }
 
         $.ajax({
             type: "POST",
-            url: "{% url 'workouts.api.saveWorkout' %}",
+            url: "{% url 'workouts.api.saveWorkoutHistory' %}",
             data: json_dict,
             success: function(data) {
                 console.log(data);

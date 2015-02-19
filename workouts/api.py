@@ -146,22 +146,39 @@ def saveWorkoutHistory(request):
 	rtn_dict = {'success': False, "msg": "", 'workout_history_id':None}
 
 	if request.method == 'POST':
-		try:
-			if not request.user.id:
-				user_id = request.POST['user']
-			else:
-				user_id = request.user.id
+		workout_id = request.POST.get('workout', False)
+		exercises = request.POST.getlist('exercises[]')
+		exercise_sets = request.POST.get('exercise_sets', False)
 
-			account = Account.objects.get(user__id=user_id)
-			workout_history = WorkoutHistory(request.POST['workout_history'])
-			workout_history.save()
+		if exercises and workout_id and exercise_sets:
+			try:
+				if not request.user.id:
+					user_id = request.POST['user']
+				else:
+					user_id = request.user.id
 
-			rtn_dict['workout_history_id'] = workout_history.id
-			rtn_dict['success'] = True
-		except Exception as e:
-			print e
-			logger.info('Error grabbing workout histories {0}'.format(e))
-			rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
+				exercise_sets = json.loads(exercise_sets)
+
+				account = Account.objects.get(user__id=user_id)
+				workout = Workout.objects.get(pk=workout_id)
+				workout_history = WorkoutHistory(account=account,workout=workout)
+				workout_history.save()
+
+				count = 0
+				for exercise_id in exercises:
+					exercise = Exercise.objects.get(pk=exercise_id)
+					exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise, order=count)
+					exercise_history.sets = exercise_sets[exercise_id]
+					exercise_history.save()
+					count +=1
+
+				rtn_dict['success'] = True
+			except Exception as e:
+				print e
+				logger.info('Error grabbing workout histories {0}'.format(e))
+				rtn_dict['msg'] = 'Error grabbing workout histories {0}'.format(e)
+		else:
+			rtn_dict['msg'] = "Submit form data invalid"
 	else:
 		rtn_dict['msg'] = 'Not POST'
 
@@ -174,21 +191,21 @@ def saveExerciseToWorkoutHistory(request):
 
 	if request.method == "POST":
 		workout_history_id = request.POST.get('workout_history', False)
-		exercise_histories = request.POST.getlist('exercises[]')
-		sets = request.POST.get('sets', False)
+		exercises = request.POST.getlist('exercises[]')
+		exercise_sets = request.POST.get('exercise_sets', False)
 
-		if exercise_histories and workout_history_id and sets:
+		if exercises and workout_history_id and exercise_sets:
 			try:
 				count = 0
 				workout_history = WorkoutHistory.objects.get(pk=workout_history_id)
-				exercise_history_ids = []
-				for exercise_item in exercise_histories:
-					exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise_item['exercise_id'], order=count)
-					exercise_history.sets = sets
+				for exercise_id in exercises:
+					exercise = Exercise.objects.get(pk=exercise_id)
+					exercise_history = ExerciseHistory(workout_history=workout_history, exercise=exercise, order=count)
+					exercise_history.sets = exercise_sets[exercise_id]
 					exercise_history.save()
-					exercise_history_ids.append(exercise_history.id)
 					count +=1
-					rtn_dict['exercise_history_ids'] = exercise_history_ids
+
+				rtn_dict['success'] = True
 			except Exception as e:
 				print 'Error saving an exercise history to a workout history: {0}'.format(e)
 				rtn_dict['msg'] = 'Error saving an exercise history to a workout history: {0}'.format(e) 

@@ -163,6 +163,33 @@ def addExerciseHistoryToWorkout(request):
 
 
 @login_required
+def saveExerciseHistory(request):
+	rtn_dict = {'success': False, "msg": ""}
+	if request.method == 'POST':
+		try:
+			if not request.user.id:
+				user_id = request.POST['user']
+			else:
+				user_id = request.user.id
+
+			account = Account.objects.get(user__id=user_id)
+
+			exercise = Exercise.objects.get(pk=request.POST['exercise'])
+			exercise_history = ExerciseHistory(exercise=exercise)
+			exercise_history.sets = request.POST['sets']
+			exercise_history.save()
+
+		except Exception as e:
+			print e
+			logger.info('Error saving exercise history {0}'.format(e))
+			rtn_dict['msg'] = 'Error saving exercise history {0}'.format(e)
+	else:
+		rtn_dict['msg'] = 'Not POST'
+
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
+
+@login_required
 def editExerciseHistory(request):
 	rtn_dict = {'success': False, "msg": ""}
 	if request.method == 'POST':

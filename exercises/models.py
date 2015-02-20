@@ -53,9 +53,9 @@ class Exercise(models.Model):
 
 
 class ExerciseHistory(models.Model):
-	workout_history = models.ForeignKey(WorkoutHistory)
+	workout_history = models.ForeignKey(WorkoutHistory, null=True, blank=True)
 	exercise = models.ForeignKey(Exercise)
-	order = models.IntegerField()
+	order = models.IntegerField(null=True,blank=True)
 	sets = models.TextField()
 
 	created = models.DateTimeField(auto_now_add=True)

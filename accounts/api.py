@@ -10,11 +10,45 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.contrib.auth.hashers import make_password
 
+from accounts.models import BetaEmail
+
 logger = logging.getLogger("django.request")
 
-def save_email(request):
-	rtn_dict = {'success': False, "msg": ""}
-	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json", status=status)
+
+@csrf_exempt
+def saveEmail(request):
+	rtn_dict = {'success': False, "msg": "", "created": False, 'email': ''}
+
+	if request.method == 'POST':
+		email = request.POST.get('email', False)
+
+		if email:
+			try:
+				email_obj = BetaEmail.objects.get(email=email)
+				rtn_dict['msg'] = 'Email {0} already submitted before'.format(email_object.email)
+			except:
+				email_obj = BetaEmail(email=email)
+				try:
+					email_obj.full_clean()
+					email_obj.save()
+
+					rtn_dict['msg'] = 'Successfully saved email {0}'.format(email_obj.email)
+					rtn_dict['success'] = True
+					rtn_dict['created'] = True
+				except Exception as e:
+					print 'Error saving email: {0}'.format(e)
+					rtn_dict['msg'] = 'Error saving email: {0}'.format(e)
+
+
+			rtn_dict['email'] = email_obj.email
+		else:
+			rtn_dict['msg'] = "'email' field not included in POST data"
+
+	else:
+		rtn_dict['msg'] = 'HTTP Method was not POST'
+
+	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+
 
 @csrf_exempt
 def login(request):
@@ -48,22 +82,6 @@ def login(request):
 
 		return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json", status=status)
 
-		#if login_failed:
-		#	response['Auth-Response'] = 'Login failed'
-	'''
-	if request.user.is_authenticated():
-		status = 200
-	else:
-		status = 401
-	'''
-
-	'''
-	response = render_to_response('accounts/login.html', {"rtn_dict":rtn_dict},
-                                  context_instance=RequestContext(request))
-	response.status_code = status
-	if login_failed:
-		response['Auth-Response'] = 'Login failed''
-	'''
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 

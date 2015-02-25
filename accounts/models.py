@@ -27,8 +27,17 @@ class Account(models.Model):
 
 
 class BetaEmail(models.Model):
-	email = models.EmailField(max_length=75, unique=True)
+	email = models.EmailField(max_length=254, unique=True)
 	created = models.DateTimeField(auto_now_add=True)
 	modified = models.DateTimeField(auto_now=True, blank=True, null=True)
 	def __unicode__(self):
 		return str('{0}'.format(self.email))
+	'''
+	def save(self, user=None, *args, **kwargs):
+		try:
+			self.full_clean()
+			super(BetaEmail, self).save()
+		except Exception as e:
+			print 'Error saving email: {0}'.format(e)
+	'''
+		

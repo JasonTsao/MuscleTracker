@@ -7,5 +7,7 @@ from django.http import HttpResponse
 
 from django.core.mail import send_mail, EmailMessage
 
+from forms import BetaEmailForm
+
 def signup(request):
-	return render_to_response('signup.html', {}, context_instance=RequestContext(request))
+	return render_to_response('email/submit_email.html', {"form":BetaEmailForm()}, context_instance=RequestContext(request))

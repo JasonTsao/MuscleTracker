@@ -54,26 +54,30 @@ def getMuscleLoads(request, start_date, end_date):
 def saveMuscleLoad(request):
 	rtn_dict = {'success': False, "msg": ""}
 
-	try:
-		if not request.user.id:
-			user_id = request.POST['user']
-		else:
-			user_id = request.user.id
+	if request.method == 'POST':
+		try:
+			if not request.user.id:
+				user_id = request.POST['user']
+			else:
+				user_id = request.user.id
 
-		account = Account.objects.get(user__id=user_id)
-		muscle_load, created = MuscleLoad.objects.get_or_create(account=account, date=datetime.datetime.now)
+			account = Account.objects.get(user__id=user_id)
+			muscle_load, created = MuscleLoad.objects.get_or_create(account=account, date=datetime.datetime.now)
 
-		if created:
-			#save all values directly into muscle load
-			pass
-		else:
-			#add new values to previous value for this date
-			pass
-		muscle_load.save()
+			if created:
+				#save all values directly into muscle load
+				pass
+			else:
+				#add new values to previous value for this date
+				pass
+			muscle_load.save()
 
-	except Exception as e:
-		print 'Unable to save Muscle Load: {0}'.format(e)
-		logger.info('Unable to save Muscle Load: {0}'.format(e))
-		rtn_dict['msg'] = 'Unable to save Muscle Load: {0}'.format(e)
+			rtn_dict['success'] = True
+		except Exception as e:
+			print 'Unable to save Muscle Load: {0}'.format(e)
+			logger.info('Unable to save Muscle Load: {0}'.format(e))
+			rtn_dict['msg'] = 'Unable to save Muscle Load: {0}'.format(e)
+	else:
+		rtn_dict['msg'] = 'request method was not POST'
 
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")

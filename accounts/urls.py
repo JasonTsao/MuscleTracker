@@ -6,4 +6,9 @@ urlpatterns = patterns("accounts.api",
                         url(r"^register$", "registerUser"),
                         url(r"^login$", "login"),
                         url(r'logout', "logoutUser"),
+                        url(r'email/save', "saveEmail"),
+)
+
+urlpatterns += patterns("accounts.views",
+			url(r"^email/new", "signup"),
 )

@@ -47,7 +47,7 @@ def saveEmail(request):
 	else:
 		rtn_dict['msg'] = 'HTTP Method was not POST'
 
-	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
+	return HttpResponse(json.dumps(rtn_dict), content_type="application/json")
 
 
 @csrf_exempt

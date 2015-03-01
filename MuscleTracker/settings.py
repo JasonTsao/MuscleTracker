@@ -112,6 +112,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+CORS_ORIGIN_WHITELIST = (
+    'muscletrackerapp.com',
+)
+
 ROOT_URLCONF = 'MuscleTracker.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -132,6 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'corsheaders',
     'south',
     'gunicorn',
     'accounts',

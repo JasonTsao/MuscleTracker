@@ -113,7 +113,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 CORS_ORIGIN_WHITELIST = (
-    'muscletrackerapp.com',
+    'http://muscletrackerapp.com',
 )
 
 ROOT_URLCONF = 'MuscleTracker.urls'

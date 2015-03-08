@@ -27,8 +27,17 @@ DATABASES = {
         }
     }
 }
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #USE THIS ONE WHEN YOU WANT EMAILS TO ACTUALLY SEND
 EMAIL_SENDER = "example@example.com"
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'example@gmail.com'
+EMAIL_HOST_PASSWORD = 'blahblahblah'
+
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts

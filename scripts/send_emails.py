@@ -21,7 +21,7 @@ def sendBetaAppEmails(request):
 
 			try:
 				print("Attempting to send message")
-				msg.send()
+				msg.send(fail_silently=False)
 			except Exception as e:
 				print("Unable to send mail")
 				print(e)

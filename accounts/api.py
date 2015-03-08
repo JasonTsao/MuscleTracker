@@ -1,5 +1,6 @@
 import json
 import logging
+from MuscleTracker import settings
 
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
@@ -9,6 +10,8 @@ from django.contrib.auth.views import logout
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.contrib.auth.hashers import make_password
+from django.template.loader import get_template
+from django.core.mail import EmailMessage
 
 from accounts.models import BetaEmail
 
@@ -137,22 +140,28 @@ def logoutUser(request):
 	return HttpResponse(json.dumps(rtn_dict, cls=DjangoJSONEncoder), content_type="application/json")
 
 
-def prepMail():
+def prepMailingList(email):
+	mail_to = set()
+	mail_to.add(email) 
+	return mail_to
+
+
+def prepBodyOfMail(email, activation_code):
+	rtn_dict = {}
+	rtn_dict['activation_code'] = activation_code
+	return rtn_dict
+
+
+def prepMail(subject, email):
     '''
         Sends a url to tryout app
     '''
     # get mail ID
-    subject = prepSubjectOfMail(issue, update_type)
-    body = prepBodyOfMail(issue, update_type, comment)
-    mail_to = prepMailingList(issue, update_type)
+    body = prepBodyOfMail(email, "example_activation_code")
+    mail_to = prepMailingList(email)
     html_content = get_template('email/index-inline.html').render(Context(body))
     mail_from = settings.EMAIL_SENDER
     msg = EmailMessage(subject, html_content, mail_from, mail_to)
     msg.content_subtype = "html"  # Main content is now text/html; needs to be called after context is set
-    try:
-        print("Attempting to send message")
-        msg.send()
-    except Exception as e:
-        print("Unable to send mail")
-        print(e)
-        print(mail_to, mail_from, subject)
+    
+    return msg
